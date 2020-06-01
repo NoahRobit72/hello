@@ -8,13 +8,13 @@ namespace Project_FinchControl
 
     // **************************************************
     //
-    // Title: Finch Control - Menu Starter
-    // Description: Starter solution with the helper methods,
+    // Title: Finch Control - Menu 
+    // Description: Solution with the helper methods,
     //              opening and closing screens, and the menu
     // Application Type: Console
-    // Author: Velis, John
-    // Dated Created: 1/22/2020
-    // Last Modified: 1/25/2020
+    // Author: Robitshek, Noah
+    // Dated Created: 5/31/2020
+    // Last Modified: 5/51/2020
     //
     // **************************************************
 
@@ -139,9 +139,8 @@ namespace Project_FinchControl
                 // get user menu choice
                 //
                 Console.WriteLine("\ta) Light and Sound");
-                Console.WriteLine("\tb) Movement");
-                Console.WriteLine("\tc) ");
-                Console.WriteLine("\td) ");
+                Console.WriteLine("\tb) Dance, Dance, Baby");
+                Console.WriteLine("\tc) Close Encounters with Aliens");
                 Console.WriteLine("\tq) Main Menu");
                 Console.Write("\t\tEnter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
@@ -190,29 +189,147 @@ namespace Project_FinchControl
 
             DisplayScreenHeader("Light and Sound");
 
-            Console.WriteLine("\tThe Finch robot will not show off its glowing talent!");
-            DisplayContinuePrompt();
+            Console.WriteLine("\tThe Finch robot will not show off its Crazy lights!");
 
+            DisplayContinuePrompt();
+            Console.WriteLine();
+            Console.WriteLine("Light show...commencing");
+
+            //
+            // Strobe light loop
+            //
             for (int lightSoundLevel = 0; lightSoundLevel < 255; lightSoundLevel++)
             {
-                finchRobot.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
-                finchRobot.noteOn(lightSoundLevel * 100);
+                finchRobot.setLED(lightSoundLevel, 0, 0);
+                finchRobot.wait(10);
+                finchRobot.setLED(0, lightSoundLevel, 0);
+                finchRobot.wait(10);
+                finchRobot.setLED(0, 0, lightSoundLevel);
+                finchRobot.wait(10);
+            }
+            //
+            // Tone raise loop
+            //
+            for (int soundLev = 50; soundLev < 900; soundLev += 50)
+            {
+                finchRobot.noteOn(soundLev);
+                finchRobot.wait(100);
+
+            }
+            //
+            // Tone lower loop
+            //
+            for (int soundLev = 900; soundLev > 50; soundLev -= 50)
+            {
+                finchRobot.noteOn(soundLev);
+                finchRobot.wait(100);
+
+            }
+            //
+            // Reset finch
+            //
+            finchRobot.noteOff();
+            finchRobot.setLED(0, 0, 0);
+
+            DisplayMenuPrompt("Talent Show");
+        }
+
+        static void DisplayDance(Finch finchRobot)
+        {
+            
+            string answ; // User response variable
+
+            DisplayScreenHeader("Dance, Dance, Baby");
+
+            Console.WriteLine("\tThe Finch robot will now break some crazy moves!!");
+
+            DisplayContinuePrompt();
+
+            //
+            // Call dancing method
+            //
+            FigureEight(finchRobot);
+
+            Console.WriteLine();
+            //
+            // Ask user if thay want the robot to dance
+            //
+            Console.Write("Would you like the finch to do\" The Scarn\" \"yes\" or \"no\"? ");
+            answ = Console.ReadLine();
+            Console.WriteLine();
+            //
+            // If the user confirms the answer then the robot will dance
+            //
+            if (answ == "yes" || answ == "Yes" || answ == "sure")
+            {
+                finchRobot.setMotors(0, -100);
+                finchRobot.wait(1000);
+                finchRobot.setMotors(-100, 0);
+                finchRobot.wait(1000);
+                finchRobot.setMotors(0, -100);
+                finchRobot.wait(1000);
+                finchRobot.setMotors(-100, 0);
+                finchRobot.wait(1000);
+                finchRobot.setMotors(0, 0);
+            }
+            else
+            {
+                Console.WriteLine("ok");
             }
 
             DisplayMenuPrompt("Talent Show");
         }
 
-        static void DisplayMovement(Finch finchRobot)
+        static void DisplayMixingItUp(Finch finchRobot)
         {
-            DisplayScreenHeader("Movement");
-
-            finchRobot.setMotors(255, 255);
+            //
+            // Display Header
+            //
+            DisplayScreenHeader("Close Encounters with Aliens");
+            //
+            //
+            //
+            Console.WriteLine("\tThe Finch robot enact \"Close Encounters with Aliens\" mode");
+            Console.WriteLine();
+            Console.WriteLine("Mr. Finch will play tunes and display the lights all at the same time!!!");
+            DisplayContinuePrompt();
+            //
+            // Play tones with lights 
+            //
+            finchRobot.noteOn(390);
+            finchRobot.setLED(255, 0, 0);
             finchRobot.wait(1000);
-            finchRobot.setMotors(0, 0);
+            finchRobot.noteOn(440);
+            finchRobot.setLED(0, 255, 0);
+            finchRobot.wait(1000);
+            finchRobot.noteOn(350);
+            finchRobot.setLED(0, 0, 255);
+            finchRobot.wait(1000);
+            finchRobot.noteOn(174);
+            finchRobot.setLED(255, 0, 0);
+            finchRobot.wait(1000);
+            finchRobot.noteOn(261);
+            finchRobot.setLED(0, 255, 0);
+            finchRobot.wait(2000);
+            finchRobot.noteOff();
 
             DisplayMenuPrompt("Talent Show");
+
         }
 
+        static void FigureEight(Finch finchRobot) // Dance move method
+        {
+            finchRobot.setMotors(0, 100);
+            finchRobot.wait(2500);
+            finchRobot.setMotors(100, 0);
+            finchRobot.wait(2500);
+            finchRobot.setMotors(0, 0);
+            finchRobot.setMotors(0, 100);
+            finchRobot.wait(2500);
+            finchRobot.setMotors(100, 0);
+            finchRobot.wait(2500);
+            finchRobot.setMotors(0, 0);
+        }
         #endregion
 
         #region DATA RECORDER
