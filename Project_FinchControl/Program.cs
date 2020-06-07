@@ -87,7 +87,7 @@ namespace Project_FinchControl
                         break;
 
                     case "c":
-
+                        DataRecorderMenuScreen(finchRobot);
                         break;
 
                     case "d":
@@ -236,7 +236,7 @@ namespace Project_FinchControl
 
         static void DisplayDance(Finch finchRobot)
         {
-            
+
             string answ; // User response variable
 
             DisplayScreenHeader("Dance, Dance, Baby");
@@ -333,6 +333,263 @@ namespace Project_FinchControl
         #endregion
 
         #region DATA RECORDER
+
+        static void DataRecorderMenuScreen(Finch finchRobot)
+        {
+            int numberOfDataPoints = 0;
+            double dataPointFrequency = 0;
+            double[] tempatures = null;
+
+            bool quitwMenu = false;
+            string menuChoice;
+
+            do
+            {
+                DisplayScreenHeader("Data Recorder Menu");
+
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) Number of Data Points");
+                Console.WriteLine("\tb) Frequency of Data Points ");
+                Console.WriteLine("\tc) Get Data");
+                Console.WriteLine("\td) Show Data");
+                Console.WriteLine("\te) Data Analysis");
+                Console.WriteLine("\tq) Main Menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // process user menu choice
+                //
+                switch (menuChoice)
+                {
+                    case "a":
+                        numberOfDataPoints = DataRecorderGetNumberOfDataPoints();
+                        break;
+
+                    case "b":
+                        dataPointFrequency = DataRecorderDisplayDataPointFrequency();
+                        break;
+
+                    case "c":
+                        tempatures = DataRecorderDisplayGetData(numberOfDataPoints, dataPointFrequency, finchRobot);
+                        break;
+
+                    case "d":
+                        DataRecorderDisplayGetData(tempatures);
+                        break;
+
+                    case "e":
+                        DataRecorderDisplayDataAnalysis(tempatures,numberOfDataPoints);
+                        break;
+
+                    case "q":
+                        quitwMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitwMenu);
+        }
+
+        /*
+        private static void DataRecorderDataAnalysis()
+        {
+            DisplayScreenHeader("Data Analysis");
+
+            DataRecorderDataAnalysisMenu();
+
+            DisplayContinuePrompt();
+        }
+
+        
+        private static void DataRecorderDataAnalysisMenu()
+        {
+            //
+            bool quitwMenu = false;
+            string menuChoice;
+
+            do
+            {
+                DisplayScreenHeader("Data Anaylysis Menu");
+
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) Average");
+                Console.WriteLine("\tb) Sum ");
+                Console.WriteLine("\tq) Main Menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // process user menu choice
+                //
+
+                switch (menuChoice)
+                {
+                    case "a":
+                       // DataRecorderSum(tempatures);
+
+                        break;
+
+                    case "b":
+                        break;
+
+                    case "q":
+                        quitwMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitwMenu);
+        }
+        */
+
+        private static void DataRecorderDisplayGetData(double[] tempatures)
+       {
+            
+            DisplayScreenHeader("Show Data");
+
+            //
+            // Table Headers
+            //
+            Console.WriteLine(
+                "Recording #".PadLeft(15)+
+                "Tempature".PadLeft(15));
+            Console.WriteLine(
+                "-----------".PadLeft(15) +
+                "---------".PadLeft(15));
+
+            //
+            // Table of values
+            //
+            for(int cnt = 0; cnt < tempatures.Length; cnt++)
+            {
+                Console.WriteLine(
+                (cnt + 1).ToString().PadLeft(15) +
+                tempatures[cnt].ToString("n2").PadLeft(15));
+            }
+            DisplayContinuePrompt();
+        }
+        /// <summary>
+        /// Finds 
+        /// </summary>
+        /// <param name="tempatures"></param>
+        /// <param name="numberOfDataPoints"></param>
+        private static void DataRecorderDisplayDataAnalysis(double[] tempatures, int numberOfDataPoints)
+        {
+            DisplayScreenHeader("Data Analysis");
+
+            double sum = 0;
+            for (int index = 0; index < tempatures.Length; index++)
+            {
+                sum += tempatures[index];
+            }
+            double avg = sum / numberOfDataPoints;
+            double avgF = ((avg * 9 / 5) + 32);
+
+            Console.WriteLine();
+            Console.WriteLine("The sum of the tempatures is: {0}", sum.ToString("n2"));
+            Console.WriteLine("The average tempature in degrees Celsius is: {0}", avg.ToString("n2"));
+            Console.WriteLine("The average tempature in degrees Fahrenheit is: {0}", avgF.ToString("n2"));
+            DisplayContinuePrompt();
+        }
+
+        private static double[] DataRecorderDisplayGetData(int numberOfDataPoints, double dataPointFrequency, Finch finchRobot)
+        {
+            double[] tempatures = new double[numberOfDataPoints];
+            double sum = 0;
+
+            DisplayScreenHeader(" Data Collection");
+            DisplayContinuePrompt();
+            Console.WriteLine();
+            Console.WriteLine("\tNumber of Data Points: {0}", numberOfDataPoints);
+            Console.WriteLine("\tFrequency of Data Points: {0}", dataPointFrequency);
+            Console.WriteLine();
+            Console.WriteLine("\tMr. Finch is ready to collect your data!!");
+            DisplayContinuePrompt();
+
+            for (int index = 0; index < numberOfDataPoints; index++)
+            {
+
+                tempatures[index] = finchRobot.getTemperature();
+                Console.WriteLine(" Reading {0}: {1}", index + 1, tempatures[index].ToString("n2"));
+                finchRobot.wait((int)(dataPointFrequency * 1000));
+            }
+     
+            DisplayContinuePrompt();
+
+            return tempatures;
+        }
+
+
+        /// <summary>
+        /// Receive the frequency of data points the user wants to collect
+        /// </summary>
+        /// <returns> Frequency of data points </returns>
+        private static double DataRecorderDisplayDataPointFrequency()
+        {
+            double dataPointFrequency;
+            bool usp;
+            DisplayScreenHeader("Frequency of Data Points Menu"); 
+
+            do
+            {
+                Console.Write("\tHow frequent would you like the data points to be collected: ");
+                usp = double.TryParse(Console.ReadLine(), out dataPointFrequency);
+                if ((!usp || dataPointFrequency < 0))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Error. Please enter a NUMBER greater than zero");
+                    Console.WriteLine();
+                }
+            } while (!usp || dataPointFrequency < 0);
+
+            DisplayContinuePrompt();
+
+            return dataPointFrequency;
+        }
+
+        /// <summary>
+        /// Receive the amout of data points the user wants to collect
+        /// </summary>
+        /// <returns> number of data points </returns>
+        private static int DataRecorderGetNumberOfDataPoints()
+        {
+            int numberOfDataPoints;
+            bool usp;
+            DisplayScreenHeader("Data Recorder"); // Valdiate user
+
+            do
+            {
+                Console.Write("\tHow many data points would you like: ");
+                usp = int.TryParse(Console.ReadLine(), out numberOfDataPoints);
+                //Console.WriteLine(usp);
+                if ((!usp || numberOfDataPoints < 0))
+                { 
+                Console.WriteLine();
+                Console.WriteLine("Error. Please enter a NUMBER greater than zero");
+                Console.WriteLine();
+                }
+            } while (!usp || numberOfDataPoints < 0);
+            
+
+            DisplayContinuePrompt();
+
+            return numberOfDataPoints;
+        }
 
         #endregion
 
